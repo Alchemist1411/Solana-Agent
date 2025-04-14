@@ -10,7 +10,7 @@ Solana LangGraph Agent is a Node.js application that leverages LangChain, OpenAI
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/Alchemist1411/LangChain.git
+    git clone https://github.com/Alchemist1411/Solana-Agent.git
     cd langgraph-agent
     ```
 
