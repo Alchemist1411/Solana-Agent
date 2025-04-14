@@ -1,0 +1,1 @@
+{"root":["./src/ai-node.ts","./src/createinstance.ts","./src/server.ts","./src/models/schema.ts","./src/routes/agent.ts","./src/routes/healthcheck.ts","./src/routes/tavily.ts","./src/toolconfig/alltools.ts","./src/tools/estimate_gas.ts","./src/tools/get_balance.ts","./src/tools/send_token.ts","./src/utils/rpc.ts","./src/utils/tavilysearch.ts"],"version":"5.7.3"}

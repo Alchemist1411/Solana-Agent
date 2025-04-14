@@ -1,0 +1,36 @@
+{
+  "name": "langgraph-solana-agent",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc -b && node dist/server.js",
+    "build": "npm i && tsc -b",
+    "dev": "nodemon --exec ts-node src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@langchain/community": "^0.3.31",
+    "@langchain/core": "^0.3.40",
+    "@langchain/langgraph": "^0.2.45",
+    "@langchain/openai": "^0.4.3",
+    "@solana/spl-token": "^0.1.8",
+    "@solana/web3.js": "^1.43.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongodb": "^6.13.1",
+    "mongoose": "^8.10.1",
+    "nodemon": "^3.1.9",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
