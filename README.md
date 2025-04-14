@@ -1,6 +1,6 @@
 # LangGraph Agent
 
-LangGraph Agent is a Node.js application that leverages LangChain, OpenAI, and various tools to perform on-chain actions on the Ethereum blockchain.
+Solana LangGraph Agent is a Node.js application that leverages LangChain, OpenAI, and various tools to perform on-chain actions on the Solana blockchain.
 ## Table of Contents
 
 - [Installation](#installation)
