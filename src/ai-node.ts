@@ -11,7 +11,6 @@ let amount: string = "";
 let token: string = "";
 let toolcall: any = "";
 let trxn: string = "";
-let prediction: any = "";
 
 
 async function llmCall(state: any) {
@@ -22,7 +21,6 @@ async function llmCall(state: any) {
         token = "";
         toolcall = "";
         trxn = "";
-        prediction = "";
     }
 
     const result = await llmWithTools.invoke([
@@ -40,7 +38,6 @@ async function llmCall(state: any) {
         amount: amount,
         token: token,
         trxn: trxn,
-        prediction: prediction
     };
 
     return { messages: result };
@@ -65,7 +62,6 @@ async function toolNode(state: any) {
                         walletAddress: observation.walletAddress,
                         token: observation.token,
                         trxn: observation.trxn,
-                        prediction: observation.prediction
                     }
                 })
             );
@@ -75,7 +71,6 @@ async function toolNode(state: any) {
             amount = observation.amount;
             token = observation.token;
             trxn = observation.trxn;
-            prediction = observation.prediction;
         }
     }
 
