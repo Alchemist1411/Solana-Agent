@@ -26,7 +26,7 @@ router.post('/chat', async (req: any, res: any) => {
     session = new Session({ userId, threadId: currentThreadId, messages: [], aiResponses: [] });
   }
 
-  session.messages.push({ role: "user", content });
+  session.messages.push({ role: "user", content, userId });
 
   try {
     console.log(`Messages before invoking agentBuilder for thread ${currentThreadId}:`, session.messages);

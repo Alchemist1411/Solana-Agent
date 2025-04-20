@@ -5,7 +5,7 @@ dotenv.config();
 
 const llm = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  modelName: "gpt-4o",
+  modelName: "gpt-4o-mini",
 });
 
 export default llm;
