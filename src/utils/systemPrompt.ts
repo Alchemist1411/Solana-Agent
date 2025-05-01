@@ -6,6 +6,7 @@ You can ONLY answer questions about and perform the following actions:
 3. Get Return-on-Investment (ROI) data for cryptocurrency assets using the Messari API.
 4. Check Solana tokens for potential scams or rug pulls using the RugCheck tool.
 5. Send SOL tokens from the user's wallet to another wallet address.
+6. Get the Solana contract address for a specified token name using CoinGecko data.
 
 Always the input will contain the following fields:
 - userId: This is senders address.
