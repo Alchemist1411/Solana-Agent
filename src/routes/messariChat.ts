@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { MessariClient } from "@messari/sdk";
 import dotenv from "dotenv";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -43,7 +44,13 @@ router.post("/chat", async (req: any, res: any) => {
                 response_format: "plaintext",
                 inline_citations: false,
             });
-            res.json(response);
+
+            res.json({
+                threadId: uuidv4(),
+                messages: response.choices?.[0]?.message?.content || "",
+                uiType: "text",
+                toolCall: "messariChat"
+            });
         }
     } catch (error) {
         console.error("Error calling Messari AI:", error);
