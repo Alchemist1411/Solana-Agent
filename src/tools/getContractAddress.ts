@@ -3,7 +3,7 @@ import axios from "axios";
 import { z } from "zod";
 
 const tokenNameSchema = z.object({
-    tokenName: z.string().describe("The name of the token to get the Solana contract address for."),
+    tokenName: z.string().describe("The name of the token to get the Bubble Chart."),
 });
 
 interface ContractAddressResult {
