@@ -55,7 +55,7 @@ const getSolanaContractAddress = tool(
         try {
             const result = await getContractAddress(tokenName);
             return {
-                uiType: "text",
+                uiType: "bubble_chart",
                 text: result.text,
                 contractAddress: result.address || null, 
             };
