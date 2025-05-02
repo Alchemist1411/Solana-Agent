@@ -12,6 +12,7 @@ let token: string = "";
 let toolcall: any = "";
 let trxn: string = "";
 let contractAddress: string = "";
+let decentralisationScore: string = "";
 
 
 async function llmCall(state: any) {
@@ -23,6 +24,7 @@ async function llmCall(state: any) {
         toolcall = "";
         trxn = "";
         contractAddress = "";
+        decentralisationScore = "";
     }
 
     const result = await llmWithTools.invoke([
@@ -41,6 +43,7 @@ async function llmCall(state: any) {
         token: token,
         trxn: trxn,
         contractAddress: contractAddress,
+        decentralisationScore: decentralisationScore,
     };
 
     return { messages: result };
@@ -66,6 +69,7 @@ async function toolNode(state: any) {
                         token: observation.token,
                         trxn: observation.trxn,
                         contractAddress: observation.contractAddress,
+                        decentralisationScore: observation.decentralisationScore,
                     }
                 })
             );
@@ -76,6 +80,7 @@ async function toolNode(state: any) {
             token = observation.token;
             trxn = observation.trxn;
             contractAddress = observation.contractAddress;
+            decentralisationScore = observation.decentralisationScore;
         }
     }
 

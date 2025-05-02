@@ -53,6 +53,7 @@ router.post('/chat', async (req: any, res: any) => {
     const token = additional_kwargs.token || null;
     const trxn = additional_kwargs.trxn || null;
     const contractAddress = additional_kwargs.contractAddress || null;
+    const decentralisationScore = additional_kwargs.decentralisationScore || null;
 
     res.json({
       threadId: currentThreadId,
@@ -64,6 +65,7 @@ router.post('/chat', async (req: any, res: any) => {
       token: token,
       trxn: trxn,
       contractAddress: contractAddress,
+      decentralisationScore: decentralisationScore
     });
 
   } catch (error) {

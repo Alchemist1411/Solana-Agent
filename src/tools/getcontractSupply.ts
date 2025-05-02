@@ -3,15 +3,14 @@ import axios from "axios";
 import { z } from "zod";
 
 const tokenNameSchema = z.object({
-    tokenName: z.string().describe("The name of the token to get the Bubble Chart."),
+    tokenName: z.string().describe("The name of the token to get the Cex supply."),
 });
 
 interface ContractAddressResult {
     text: string;
-    address?: string; 
 }
 
-async function getContractAddress(tokenName: string): Promise<ContractAddressResult> {
+async function getcontractScore(tokenName: string): Promise<ContractAddressResult> {
     try {
         const url = 'https://api.coingecko.com/api/v3/coins/list?include_platform=true';
         const response = await axios.get(url);
@@ -29,11 +28,13 @@ async function getContractAddress(tokenName: string): Promise<ContractAddressRes
         const coinData = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}`);
         const solanaAddress = coinData.data.platforms?.solana;
 
-        if (solanaAddress) {
-            console.log(`Solana contract address for ${tokenName}: ${solanaAddress}`);
+        const score = await axios.get(`https://api-legacy.bubblemaps.io/map-metadata?chain=sol&token=${solanaAddress}`);
+
+        const supplyCex = score.data.identified_supply.percent_in_contracts;
+
+        if (supplyCex) {
             return {
-                text: `Solana contract address for ${tokenName}: ${solanaAddress}`,
-                address: solanaAddress,
+                text: `Contract supply score for ${tokenName}: ${supplyCex}`
             };
         } else {
             console.error(`No Solana contract address found for ${tokenName}.`);
@@ -50,29 +51,27 @@ async function getContractAddress(tokenName: string): Promise<ContractAddressRes
     }
 }
 
-const getSolanaContractAddress = tool(
+const getcontractsupplytool = tool(
     async ({ tokenName }) => {
         try {
-            const result = await getContractAddress(tokenName);
-            return {
-                uiType: "bubble_chart",
-                text: result.text,
-                contractAddress: result.address || null, 
-            };
-        } catch (error) {
-            console.error("Error in getContractAddress:", error);
+            const result = await getcontractScore(tokenName);
             return {
                 uiType: "text",
-                text: `Error in getContractAddress: ${error}`,
-                contractAddress: null,
+                text: result.text
+            };
+        } catch (error) {
+            console.error("Error in getting contract supply:", error);
+            return {
+                uiType: "text",
+                text: `Error in getting contract supply for ${tokenName}: ${error}`
             };
         }
     },
     {
-        name: "getSolanaContractAddress",
-        description: "Get the Bubble Chart for a specified token name using CoinGecko data.",
+        name: "getcontractsupplytool",
+        description: "Get the contract supply for specified token name using Bubble ",
         schema: tokenNameSchema,
     }
 );
 
-export default getSolanaContractAddress;
+export default getcontractsupplytool;
