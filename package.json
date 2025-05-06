@@ -23,16 +23,21 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "axios": "^1.7.9",
+    "bs58": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.13.1",
     "mongoose": "^8.10.1",
     "nodemon": "^3.1.9",
+    "tweetnacl": "^1.0.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.3",
+    "@types/uuid": "^10.0.0",
     "ts-node": "^10.9.2"
   }
 }
