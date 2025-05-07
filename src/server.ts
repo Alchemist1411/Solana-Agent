@@ -8,7 +8,7 @@ import messariRouter from "./routes/messari";
 import signUpRouter from "./routes/Auth/SignUp";
 import signInRouter from "./routes/Auth/SignIn";
 import verifyRouter from "./routes/Auth/Verify";
-import nounceRouter from "./routes/Auth/Nounce";
+
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -28,7 +28,6 @@ app.use("/", messariRouter);
 app.use("/auth", signUpRouter);
 app.use("/auth", signInRouter);
 app.use("/auth", verifyRouter);
-app.use("/auth", nounceRouter);
 
 app.listen(port, () => {
     console.log(`Service is running on port: ${port}`);

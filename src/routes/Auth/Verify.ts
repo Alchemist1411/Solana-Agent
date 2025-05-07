@@ -1,22 +1,30 @@
 import express from "express";
 import jwt from "jsonwebtoken";
+import nacl from "tweetnacl";
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
 
-router.get("/verify", (req: any, res: any) => {
-  const token = req.cookies?.token;
-  if (!token) return res.status(401).end();
+router.post("/verify", async (req: any, res: any) => {
+  const { publicKey, signature } = req.body;
 
+  const staticMessage = "Sign in to Arrakas AI";
+  const messageBytes = Buffer.from(staticMessage);
+  const sigBytes = Buffer.from(signature, "hex");
+
+  let pubkeyBytes;
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!);
-    if (typeof payload === "object" && payload !== null && "sub" in payload && "addr" in payload) {
-      return res.json({ user: { id: payload.sub, publicKey: payload.addr } });
-    } else {
-      return res.status(401).end();
-    }
+    const bs58 = (await import("bs58")).default;
+    pubkeyBytes = bs58.decode(publicKey);
   } catch {
-    return res.status(401).end();
+    return res.status(400).json({ error: "Invalid public key" });
   }
+
+  const valid = nacl.sign.detached.verify(messageBytes, sigBytes, pubkeyBytes);
+  if (!valid) return res.status(401).json({ error: "Invalid signature" });
+
+  return res.json({ user: { publicKey } });
 });
 
 export default router;
