@@ -29,7 +29,10 @@ router.post("/signup", async (req: any, res: any) => {
   // Find or create user
   let user = await User.findOne({ publicKey });
   if (!user) {
-    user = await User.create({ publicKey });
+    user = await User.create({
+      publicKey,
+      tokens: 100
+    });
   }
 
   // Issue JWT
@@ -39,14 +42,13 @@ router.post("/signup", async (req: any, res: any) => {
     { algorithm: "HS256", expiresIn: "1h" }
   );
 
-  res.cookie("token", token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 1000,
+  res.json({
+    user: {
+      id: user._id,
+      publicKey: user.publicKey,
+      tokens: user.tokens
+    }
   });
-
-  res.json({ user: { id: user._id, publicKey: user.publicKey } });
 });
 
 export default router;

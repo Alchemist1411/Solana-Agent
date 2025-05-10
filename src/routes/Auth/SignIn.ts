@@ -42,7 +42,13 @@ router.post("/signin", async (req: any, res: any) => {
     maxAge: 60 * 60 * 1000,
   });
 
-  return res.json({ user: { id: user._id, publicKey: user.publicKey } });
+  return res.json({
+    user: {
+      id: user._id,
+      publicKey: user.publicKey,
+      tokens: user.tokens
+    }
+  });
 });
 
 export default router;
