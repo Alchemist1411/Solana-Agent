@@ -8,9 +8,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const router = Router();
-const MESSAGE_LIMIT = 20;
+const MESSAGE_LIMIT = 40;
 
-mongoose.connect(process.env.MONGODB_URI || "");
+mongoose.connect(process.env.MONGODB_URI || "")
+  .then(() => console.log('Connected to MongoDB'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
 router.post('/chat', async (req: any, res: any) => {
   const { userId, content, threadId } = req.body;
@@ -19,30 +21,59 @@ router.post('/chat', async (req: any, res: any) => {
     return res.status(400).json({ error: 'UserId and content are required' });
   }
 
-  let currentThreadId = threadId || uuidv4();
-  let session = await Session.findOne({ threadId: currentThreadId });
+  let session;
 
-  if (!session) {
-    session = new Session({ userId, threadId: currentThreadId, messages: [], aiResponses: [] });
+  if (threadId) {
+    session = await Session.findOne({ threadId });
   }
 
-  session.messages.push({ role: "user", content, userId });
+  if (!session) {
+    session = await Session.findOne({ userId });
+  }
+
+  if (!session) {
+    const newThreadId = uuidv4();
+    session = new Session({
+      userId,
+      threadId: newThreadId,
+      conversationHistory: []
+    });
+  }
+
+  session.conversationHistory.push({
+    role: "user",
+    content,
+    timestamp: new Date()
+  });
 
   try {
-    console.log(`Messages before invoking agentBuilder for thread ${currentThreadId}:`, session.messages);
-
-    const result = await agentBuilder.invoke({ messages: session.messages });
-
-    console.log(`Messages after invoking agentBuilder for thread ${currentThreadId}:`, result.messages);
-
-    session.aiResponses.push({ role: "assistant", response: result.messages });
-
-    session.messages = session.messages.slice(-MESSAGE_LIMIT);
-    await session.save();
+    const result = await agentBuilder.invoke({
+      messages: session.conversationHistory.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }))
+    });
 
     const last_message = result.messages[result.messages.length - 1];
-    const additional_kwargs = last_message?.additional_kwargs || {};
 
+    session.conversationHistory.push({
+      role: "assistant",
+      content: last_message.content,
+      timestamp: new Date()
+    });
+
+    if (session.conversationHistory.length > MESSAGE_LIMIT) {
+      const itemsToRemove = session.conversationHistory.length - MESSAGE_LIMIT;
+      for (let i = 0; i < itemsToRemove; i++) {
+        session.conversationHistory.shift();
+      }
+    }
+
+    session.lastAccessed = new Date();
+
+    await session.save();
+
+    const additional_kwargs = last_message?.additional_kwargs || {};
     console.log("Additional Kwargs:", additional_kwargs);
 
     const toolCall = additional_kwargs.toolCall;
@@ -56,7 +87,7 @@ router.post('/chat', async (req: any, res: any) => {
     const decentralisationScore = additional_kwargs.decentralisationScore || null;
 
     res.json({
-      threadId: currentThreadId,
+      threadId: session.threadId,
       messages: last_message.content,
       uiType: ui_type,
       tool_calls: tool_names,
