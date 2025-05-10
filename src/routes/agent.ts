@@ -93,7 +93,6 @@ router.post('/chat', async (req: any, res: any) => {
   }
 });
 
-// Add a new endpoint to get token balance
 router.post("/token-balance", async (req: any, res: any) => {
   const { userId } = req.body;
 
