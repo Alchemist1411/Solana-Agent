@@ -15,11 +15,11 @@ const port = process.env.PORT || 8000;
 app.use(express.json());
 dotenv.config();
 app.use(
-    cors({
-      origin: "http://localhost:3000",
-      credentials: true,
-    })
-  );
+  cors({
+    origin: ["http://localhost:3000", "https://arrakas-ai.vercel.app"],
+    credentials: true,
+  })
+);
 
 app.use("/v1/agent", agentRouter);
 app.use("/", healthCheckRouter);
