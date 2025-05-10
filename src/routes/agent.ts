@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { agentBuilder } from "../ai-node";
 import mongoose from 'mongoose';
 import Session from "../models/schema";
+import User from "../models/user";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 const router = Router();
 const MESSAGE_LIMIT = 20;
+const TOKENS_PER_INTERACTION = 7;
 
 mongoose.connect(process.env.MONGODB_URI || "");
 
@@ -17,6 +19,19 @@ router.post('/chat', async (req: any, res: any) => {
 
   if (!userId || !content) {
     return res.status(400).json({ error: 'UserId and content are required' });
+  }
+
+  const user = await User.findOne({ publicKey: userId });
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  if (user.tokens <= 0) {
+    return res.status(403).json({
+      error: 'Not enough tokens',
+      tokens: 0,
+      message: 'You have run out of tokens. Please buy more tokens.'
+    });
   }
 
   let currentThreadId = threadId || uuidv4();
@@ -39,6 +54,9 @@ router.post('/chat', async (req: any, res: any) => {
 
     session.messages = session.messages.slice(-MESSAGE_LIMIT);
     await session.save();
+
+    user.tokens = Math.max(0, user.tokens - TOKENS_PER_INTERACTION);
+    await user.save();
 
     const last_message = result.messages[result.messages.length - 1];
     const additional_kwargs = last_message?.additional_kwargs || {};
@@ -65,11 +83,35 @@ router.post('/chat', async (req: any, res: any) => {
       token: token,
       trxn: trxn,
       contractAddress: contractAddress,
-      decentralisationScore: decentralisationScore
+      decentralisationScore: decentralisationScore,
+      tokens: user.tokens
     });
 
   } catch (error) {
     console.error('Error occurred while processing the request:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.post("/token-balance", async (req: any, res: any) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: 'UserId is required' });
+  }
+
+  try {
+    const user = await User.findOne({ publicKey: userId });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      userId: userId,
+      tokens: user.tokens
+    });
+  } catch (error: any) {
+    console.error('Error retrieving token balance:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
