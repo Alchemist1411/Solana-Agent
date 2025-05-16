@@ -1,13 +1,19 @@
 import mongoose from 'mongoose';
 
-const sessionSchema = new mongoose.Schema({
-  userId: { type: String, required: true},
-  threadId: { type: String, required: true, unique: true },
-  messages: { type: Array, required: true },
-  aiResponses: { type: Array, default: [] },
+const messageSchema = new mongoose.Schema({
+  role: { type: String, required: true },
+  content: { type: String, required: true },
+  timestamp: { type: Date, default: Date.now }
 });
 
-sessionSchema.index({ userId: 1 });
+const sessionSchema = new mongoose.Schema({
+  userId: { type: String, required: true, index: true },
+  threadId: { type: String, required: true, unique: true },
+  lastAccessed: { type: Date, default: Date.now },
+  conversationHistory: [messageSchema]
+});
+
+sessionSchema.index({ userId: 1, lastAccessed: -1 });
 
 const Session = mongoose.model('Session', sessionSchema);
 
